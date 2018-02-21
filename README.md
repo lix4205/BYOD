@@ -80,7 +80,7 @@ Toutefois vous pouvez passez les param&egrave;tres directement, voici une rapide
 # Exemple
 Ce qui nous donne pour une distribution <strong>x64</strong>, avec <strong>NetworkManager</strong> pour le r&eacute;seau, <strong>intel</strong> comme driver graphique, l'environnement de bureau <strong>xfce</strong>, un utilisateur <strong>user</strong>, <strong>hostname</strong> comme nom de machine, Grub sur le disque <strong>/dev/sdf</strong>, la gestion des imprimantes avec <strong>cups</strong>, <strong>libreoffice</strong> et <strong>thunderbird</strong> ainsi que <strong>gimp</strong> et <strong>steam</strong>. Le tout en <strong>francais</strong>.<br />
 Pour ArchLinux :<br />
-<code># /path/to/the/script/launchinstall.sh fr_FR -K fr -k fr-latin1 -z Europe/Paris -a x64 -n nm -g intel  -e xfce -h hostname -u user -l /dev/sdf -p -TL /path/to/install gimp steam</code>
+<code># /path/to/the/script/launchinstall.sh fr_FR -K fr -k fr-latin1 -z Europe/Paris -a x64 -n nm -g intel  -e xfce -h hostname -u user -l /dev/sdf -p -TL /path/to/install gimp steam</code><br />
 Pour Debian :<br />
 <code># /path/to/the/script/launchinstall.sh debian fr_FR -K fr -k fr-latin1 -z Europe/Paris -a x64 -n nm -g intel  -e xfce -h hostname -u user -l /dev/sdf -p -TL /path/to/install gimp steam</code>
 # CAUTION !
