@@ -1,6 +1,6 @@
-# anarchi
-Ce script est destin&eacute; &agrave; installer la distribution ArchLinux avec un environnement de bureau minimal ( Web, Multimedia ).
-<br />Il a &eacute;t&eacute; conçu afin d'installer ArchLinux depuis un syst&egrave;me d&eacute;j&agrave; op&eacute;rationnel, type LiveCD.<br />Fonctionne sur ArchLinux, Debian et ses dérivées, et probablement la plupart des distributions...
+# BYOD (Bring Your Own Distribution)
+Ce script est destin&eacute; &agrave; installer une distribution ArchLinux ou debian avec un environnement de bureau minimal ( Web, Multimedia ).
+<br />Il a &eacute;t&eacute; conçu afin d'installer une distribution depuis un syst&egrave;me d&eacute;j&agrave; op&eacute;rationnel, type LiveCD.<br />Fonctionne sur ArchLinux, Debian et ses dérivées, et probablement la plupart des distributions...
 <br />On peut aussi placer un script du nom de l'utilisateur dans "anarchi/files/custom.d" afin de personnaliser votre environnement post-installation.
 <br />Ce script peut aussi effectuer une installation sans disque destin&eacute;e &agrave; être boot&eacute;e en r&eacute;seau ( 
 param&egrave;tre "-n nfsroot" )...
@@ -78,5 +78,10 @@ Toutefois vous pouvez passez les param&egrave;tres directement, voici une rapide
 </ul>	
 
 # Exemple
-Ce qui nous donne pour une distribution <strong>x64</strong>, avec <strong>NetworkManager</strong> pour le r&eacute;seau, <strong>intel</strong> comme driver graphique, l'environnement de bureau <strong>xfce</strong>, un utilisateur <strong>user</strong>, <strong>hostname</strong> comme nom de machine, Grub sur le disque <strong>/dev/sdf</strong>, la gestion des imprimantes avec <strong>cups</strong>, <strong>libreoffice</strong> et <strong>thunderbird</strong> ainsi que <strong>gimp</strong> et <strong>steam</strong>. Le tout en <strong>francais</strong> :<br />
+Ce qui nous donne pour une distribution <strong>x64</strong>, avec <strong>NetworkManager</strong> pour le r&eacute;seau, <strong>intel</strong> comme driver graphique, l'environnement de bureau <strong>xfce</strong>, un utilisateur <strong>user</strong>, <strong>hostname</strong> comme nom de machine, Grub sur le disque <strong>/dev/sdf</strong>, la gestion des imprimantes avec <strong>cups</strong>, <strong>libreoffice</strong> et <strong>thunderbird</strong> ainsi que <strong>gimp</strong> et <strong>steam</strong>. Le tout en <strong>francais</strong>.<br />
+Pour ArchLinux :<br />
 <code># /path/to/the/script/launchinstall.sh fr_FR -K fr -k fr-latin1 -z Europe/Paris -a x64 -n nm -g intel  -e xfce -h hostname -u user -l /dev/sdf -p -TL /path/to/install gimp steam</code>
+Pour Debian :<br />
+<code># /path/to/the/script/launchinstall.sh debian fr_FR -K fr -k fr-latin1 -z Europe/Paris -a x64 -n nm -g intel  -e xfce -h hostname -u user -l /dev/sdf -p -TL /path/to/install gimp steam</code>
+# CAUTION !
+L'installation de debian présente quelques soucis au niveau de certaines dépendances entre paquets selon les versions...<br />
