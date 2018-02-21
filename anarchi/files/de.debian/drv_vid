@@ -1,0 +1,196 @@
+# This file contains packages to install 
+# DEBIANVERSION=("wheezy" "jessie" "jessie-backports" "stretch" "buster" "sid" )
+DEBIANVERSION=("wheezy" "jessie" "jessie-backports" "stretch" "buster" )
+# Set default to buster (testing)
+DEBIAN_DEFAULT="stretch"
+
+# #
+# # Base packages
+# #
+BASE_PACKAGES="locales,console-setup,console-data,kbd"
+# 
+# #
+# # Grub packages
+# #
+GRUB_PACKAGES="grub-pc,os-prober"
+# GRUB_PACKAGES="grub-pc os-prober"
+# 
+# #
+# # Additionnal packages noto-fonts-cjk for korean, japanese, chinese
+# # 
+# 
+LANGAGE_PACK="fonts-noto-cjk"
+# 
+# #
+# # Navigator packages
+# #
+PACK_NAV="firefox-esr"
+PACK_NAV_LANG="$PACK_NAV-l10n"
+# 
+# #
+# # 
+# #
+# 
+# #
+# # Videos drivers
+# #
+# #
+DRV_ATI="xserver-xorg-video-ati"
+DRV_INTEL="xserver-xorg-video-intel"
+DRV_VIRTUALBOX="virtualbox-guest-utils virtualbox-guest-x11"
+DRV_NOUVEAU="xserver-xorg-video-nouveau"
+DRV_NV="nvidia nvidia-libgl nvidia-utils"
+DRV_NV340="nvidia-340xx nvidia-340xx-libgl nvidia-340xx-utils"
+DRV_NV304="nvidia-304xx nvidia-304xx-libgl nvidia-304xx-utils"
+DRV_MESA="mesa-utils"
+# DRV_MESA="mesa-libgl"
+# 
+DRV_ALL="$DRV_INTEL $DRV_ATI $DRV_NOUVEAU $DRV_VIRTUALBOX $DRV_MESA"
+# 
+_graphic_list=("intel (xserver-xorg-video-intel)" "NVidia" "ATI (xserver-xorg-video-ati)" "Virtualbox" )
+# #
+# # WiFi NETWORK 
+# #
+# # WIFI_TOOLS="wireless_tools"
+WIFI_TOOLS="wpasupplicant iw"
+NETM_TOOLS=""
+# 
+# 
+# #
+# # Desktop Environnement 
+# #
+ENVIRONNEMENT=("plasma" "gnome" "mate" "cinnamon" "xfce" "lxde" "lxqt" "enlightenment" "fluxbox" "deepin" "budgie-desktop" "i3")
+DISPLAYMANAGER=("sddm" "gdm" "lightdm" "lxdm" "slim" "xdm" "nodm")
+PACK_LIGHTDM="lightdm lightdm-gtk-greeter"
+PACK_XDM="xdm"
+# #
+# # Desktop Environnement with NetworkManager
+# #
+NET_PLASMA="plasma-nm $WIFI_TOOLS"
+NET_GNOME="$NETM_TOOLS $WIFI_TOOLS gnome-keyring"
+NET_XFCE="$NET_GNOME"
+NET_MATE="$NET_GNOME"
+NET_LXDE="$NET_GNOME"
+NET_LXQT="$WIFI_TOOLS"
+# NET_DEEPIN="$NET_GNOME"
+# NET_BUDGIE="$NET_GNOME"
+# 
+# # 
+# # Others
+# #
+# PACK_YAOURT=""
+PACK_BLUEZ="bluez bluez-tools"
+# gtk3-print-backends pour lister les imprimantes dans firefox
+PACK_CUPS="cups"
+PACK_HPLIP="hplip $PACK_CUPS"
+PACK_OFFICE_SUITE="libreoffice"
+PACK_OFFICE_SUITE_LANG="$PACK_OFFICE_SUITE-l10n"
+PACK_MAIL="thunderbird"
+PACK_MAIL_LANG="$PACK_MAIL-l10n"
+PACK_TOUCHPAD="xserver-xorg-input-libinput"
+PACK_KDE_LANG="kde-l10n"
+
+PACK_NETWORKMANAGER="network-manager"
+PACK_CONNMAN="connman"
+
+SYSTD_BLUEZ="bluetooth"
+SYSTD_CUPS="org.cups.cupsd"
+declare -A envir=( 
+# BEGIN 
+    #Lightdm package
+	[pack_lightdm]="$PACK_LIGHTDM" 
+	[pack_xdm]="$PACK_XDM" 
+      
+	#PLASMA 5
+	[dm_plasma]="sddm" 
+	[syst_plasma]="sddm" 
+	[netm_plasma]="$NET_PLASMA"
+	#KDE4
+# 	[syst_kde4]="kdm"
+# 	[netm_kde4]="kdeplasma-applets-plasma-nm wireless_tools"
+	#Cinnamon
+	[dm_cinnamon]="$PACK_LIGHTDM" 
+	[syst_cinnamon]="lightdm"
+	[netm_cinnamon]="$NET_GNOME"
+	#GNOME
+	[dm_gdm]="gdm" 
+	[syst_gnome]="gdm"
+	[netm_gnome]="$NET_GNOME"
+	#MATE
+	[dm_mate]="$PACK_LIGHTDM" 
+	[syst_mate]="lightdm"
+	[netm_mate]="$NET_MATE"
+	#LXDE
+	[dm_lxde]="lxde" 
+	[syst_lxde]="lxdm"
+	[netm_lxde]="$NET_LXDE"
+	#XFCE
+	[dm_xfce]="$PACK_LIGHTDM" 
+	[syst_xfce]="lightdm"
+	[netm_xfce]="$NET_XFCE"
+	#LXQT
+	[dm_lxqt]="sddm" 
+	[syst_lxqt]="sddm"
+	[netm_lxqt]="$NET_LXQT"
+	#Fluxbox
+	[dm_fluxbox]="slim" 
+	[syst_fluxbox]="slim"
+	[netm_fluxbox]="$NET_XFCE"
+	# Enlightenment
+	[dm_enlightenment]="$PACK_LIGHTDM" 
+	[syst_enlightenment]="lightdm"
+	[netm_enlightenment]="$NET_LXQT"
+	# Deepin
+# 	[dm_deepin]="lightdm lightdm-deepin-greeter"
+	[dm_deepin]="$PACK_LIGHTDM" 
+	[syst_deepin]="lightdm"
+# 	[netm_deepin]="$NET_LXQT"
+	# Budgie-desktop
+	[dm_budgie-desktop]="$PACK_LIGHTDM" 
+	[syst_budgie-desktop]="lightdm"
+	[netm_budgie-desktop]="$NET_GNOME"
+	# i3
+	[dm_i3]="$PACK_XDM" 
+	[syst_i3]="xdm"
+	[netm_i3]="$NET_GNOME"
+# END
+# Debian default branche
+    [dv_default]="$DEBIAN_DEFAULT"
+)
+
+declare -A graphic_drv=(
+# BEGIN 
+	[0]=1
+	[intel]=1
+	[ati]=1
+	[radeon]=1
+	[nouveau]=1
+	[nv]=0
+	[nvidia]=1
+	[nvidia-304xx]=1
+	[nvidia-304]=1
+	[nvidia-340xx]=1
+	[nvidia-340]=1
+	[all]=1
+	[vb]=1
+	[virtualbox]=1
+	[_0]=""
+	[_intel]="$DRV_INTEL $DRV_MESA"
+	[_all]="$DRV_ALL $DRV_MESA"
+	[_ati]="$DRV_ATI $DRV_MESA"
+	[_radeon]="$DRV_ATI $DRV_MESA"
+	[_nouveau]="$DRV_NOUVEAU $DRV_MESA"
+	[_nv]=0
+	[_nvidia]="$DRV_NV"
+	[_nvidia-304xx]="$DRV_NV304"
+	[_nvidia-304]="$DRV_NV304"
+	[_nvidia-340xx]="$DRV_NV340"
+	[_nvidia-340]="$DRV_NV340"
+	[_vb]="$DRV_VIRTUALBOX $DRV_MESA"
+	[_virtualbox]="$DRV_VIRTUALBOX $DRV_MESA"
+	
+	[name_vb]="virtualbox"
+	[name_radeon]="ati"
+	[name_nv]="nvidia"
+# END
+)

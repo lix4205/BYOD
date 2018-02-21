@@ -1,0 +1,171 @@
+##
+## 							
+## French Translation File		
+##								
+##
+## Écrit par Elie Coutaud (28-Nov-2015)
+##
+##
+
+#BASIC
+_yes="o"
+_no="n"
+_error="ERREUR"
+_caution="AVERTISSEMENT"
+_abort="Annulation..."
+_continue="Continuer"
+_delete_tmp="Supprimer les fichiers temporaires ?"
+_go_on="C'est parti..."
+_preparation="Préparation..."
+_ok="ok"
+_fail="non trouvé !"
+_launch_install="Lancement de /tmp/install/pacinstall.sh "
+_welcome="Another Arch Installer"
+_selected="\"%s\" sélectionné"
+
+#SYSTEM REQUIEREMENT
+_check_init="Vérification de l'installation initiale"
+_checking="Cherche"
+_command_not_found="\"command\" non trouvé. Vérification annulée !"
+_requirement_missing="Prérequis manquant"
+_test_net="Connexion Internet..."
+_net_conf_invalid="L'interface réseau %s est invalide !"
+_arch_install_scripts="Installer \"%s\" ?"
+_arch_install_scripts_ok="\"%s\" à bien été installé !"
+_nodir="Aucun répertoire racine spécifié !"
+_invalid_option="'%s: Option invalide \"%s\" !"
+_argument_option="'%s: l\'option '%s' requiert un argument !"
+_install_ais_failed="Echec de l'installation d'arch-install-scripts"
+_impossible="Il est impossible d'installer un noyau x64 a partir d'un noyau i686 !"
+_yaourt_install="Installation de\n\t%s"
+_set_timezone="Sélection du fuseau horaire"
+_set_consolek="Sélection du codage clavier en console"
+_set_keymapX11="Sélection du codage clavier pour X11"
+_set_locale="Sélection de la locale"
+_list_loading="Chargement de la liste..."
+_locale_checking="Vérifie l'existence de la locale \"%s\" ..."
+_locales_set="Locale \"%s\" sélectionnée"
+_timezone_checking="Vérifie l'existence du fuseau horaire \"%s\"..."
+_timezone_set="Fuseau horaire $_selected"
+_console_k_checking="Vérifie l'existence du codage clavier \"%s\"..."
+_console_k_set="Codage clavier $_selected"
+_x11k_checking="Vérifie l'existence du codage clavier \"%s\" pour X11..."
+_x11k_selected="Codage clavier $_selected pour X11"
+_missing_file="Le fichier %s n'est pas présent sur le système. ArchLinux Bootstrap Image est en cours de téléchargement."
+_choix_de="Entrez une sélection %s"
+_pageup="( shift + Page UP pour voir le haut de la liste ) "
+_0_select=" ( laisser vide pour afficher les indications sur le matériel )"
+
+#SYSTEM CONFIG
+_file_load="Charger le fichier généré ? (\"e\" pour éditer)"
+_arch="Sélection de l'architecture."
+_arch_selected="Architecture %s sélectionnée "
+_processor_i686="Paramètrer pour une architecture i686 ?"
+_env="Sélection de l'environnement de bureau ( 0 pour aucun )"
+_env_set="Environnement de bureau $_selected"
+_defaultdm="Utiliser \"%s\" ?"
+_select_dm="Sélection du Display Manager"
+#\n1) plasma\n2) gnome\n3) kde4 (dropped !)\n4) xfce\n5) mate\n6) lxde\n7) lxqt"
+_hostname="Nom de la machine ?"
+_hostname_set="La machine sera identifié comme \"%s\" sur le réseau"
+_username="Login utilisateur ?"
+_username_set="Le login de l'utilisateur principal sera \"%s\""
+_net="Sélection de l'interface réseau"
+_net_selected="%s sélectionné pour gérer l'interface réseau"
+_net_nm="Utiliser \"NetworkManager\""
+_net_dhcp="Utilitser \"dhcpcd\" ( Defaut )"
+_net_nfsroot="Nfs root"
+_graphic="Sélection du pilote Vidéo. (0 pour aucun.)"
+_graphic_none="Aucun pilote vidéo sélectionné !"
+_graphic_set="Pilote vidéo %s sélectionné"
+
+# _graphic_list="\t0) Aucun\n\t1) intel (xf86-video-intel)\n\t2) NVidia\n\t3) ATI (xf86-video-ati)\n\t4) Virtualbox ?"
+# _graphic_nv="\t0) Afficher les indications sur le matériel\n\t1) Pilote libre : \"xf86-video-nouveau\"\n\t2) Pilote propriétaire :\"nvidia\" ( GeForce 400 series end newer)\n\t3) Pilote propriétaire : \"nvidia-340xx\" (GeForce 8000/9000 and 100-300 series)\n\t4) Pilote propriétaire : \"nvidia-304xx\" (GeForce 6000/7000 series)"
+_graphic_nv=("Pilote libre : \"xf86-video-nouveau\"" "Pilote propriétaire :\"nvidia\" ( GeForce 400 series end newer)" "Pilote propriétaire : \"nvidia-340xx\" (GeForce 8000/9000 and 100-300 series)" "Pilote propriétaire : \"nvidia-304xx\" (GeForce 6000/7000 series)" )
+_no_translation="Fichier de traductions \"%s.trans\" non trouvé... Chargement de \"%s.trans\"..."
+_set_pass_msg="Options d'identifications"
+_pass_user1="Mot de passe %s ? "
+_pass_user2="Entrez le mot de passe pour confirmer " 
+_empty_pass="Le mot de passe de l'utilisateur %s est vide !"
+
+#ERROR !
+_grub_unable="Impossible d'installer grub sur le disque"
+_mountpoint="%s n'est pas un point de montage !"
+_error_pass="Les mots de pase ne correspondent pas !"
+_not_a_dir="%s n'est pas un répertoire !"
+_install_error="Un problème est survenu durant l'installation !"
+_install_copie="Un problème est survenu lors de la copie !"
+_install_ok="L'installation est terminée !\n\nVous pouvez utilisez la commande ci dessous pour réinstaller ci besoin est\n%s\n"
+_bug_chroot="(BUG): Tentative d'ecrasement de l'évenement \"EXIT\"."
+_pacman_fail="Echec de l'installation des paquets dans \"%s\""
+_failed_prepare_chroot="Echec du paramètrage de chroot %s"
+_invalid_param="Paramètre(s) non valide(s)"
+_valid_choice="\"%s\" n'est pas un choix valide !"
+_pkg_err="Le(s) paquet(s) suivants n'existe(nt) pas :"
+_systd_error="Les services systemd (%s) n'ont pas été activé !"
+_pass_unchanged="L'utilsateur %s existe déjà, Les mots de passes ne seront pas changés"
+_grub_notinstalled="Grub n'est pas installé !"
+_no_internet="Une connexion Internet est nécessaire pour télécharger la liste des paquets !"
+
+#RECAP
+#_util_command="Utilisez cette commande directement pour passer les étapes de paramètrage"
+_util_command="Le fichier %s contenant la commande suivante est disponible dans /tmp"
+_relaunch="Relancer la commande suivante quand vous serez prêt !\n\n%s\n"
+_grub_installed="Grub a été installé sur le disque"
+_grub_created="Un fichier de configuration pour GRUB est disponible dans %s "
+_init_sudo="Paramètrage de \"%s\""
+
+#NOT BASED ARCH
+_bootstrap="Voulez vous continuer avec archlinux bootstrap image ?"
+_launch_dl="Lancement du téléchargement de l'image."
+_downloading="Téléchargement de l'image"
+_wget_missing="Aucun outil de téléchargement n'a été trouvé !\nInstallez \"curl\" ou \"wget\" pour continuer..."
+_archive_extract="Décompression de l'archive..."
+_prepare_chroot="Préparation de l'installation dans un environnement chrooté"
+_chroot_i="Mode intéractif activé avec l'option \"-i\".\n\tVous allez être \"chrooté\" dans %s afin de lancer l'installation vous même !\n\t$_continue"
+_chroot_msg="Bienvenue dans l'installation d'ArchLinux !
+	Tapez \"su\" puis \"cd /install.arch/tmp/install\" et enfin remonter dans l'historique afin de lancer :
+	"./%s" 
+	Une fois terminé, déconnectez deux fois vous en tapant \"exit\" ou faites \"CTRL + D\".
+	Ensuite, vous serez \"chrooté\" sur votre nouvelle installation"
+
+#PAVE D'INFOS 
+_info_gen="Paramètres de l'installation :"
+_info_grub="Grub sera installé sur le périphérique"
+_info_root="sera utilisé pour l'installation !"
+_info_arch="Architecture"
+_info_drv_vid="Pilote graphique :"
+_info_net="Configuration réseau :"
+_info_de="Environnement de Bureau :"
+_info_hostname="Nom de l'ordinateur"
+_info_user="Login utilisateur"
+_info_base="Installation de base"
+_info_complement="Compléments"
+_info_yaourt="Paquets AUR"
+_info_systd="Activation des services suivants"
+_info_cache="Le dossier \"%s\" sera utilisé pour le cache des paquets"
+
+# INSTALLATION
+_creating_root="Création de la nouvelle arborescence dans %s"
+_pacman_install="Installation des paquets dans %s"
+_mi_install="L'installation de base est terminé !"
+#_mi_install2="L'installation de l'interface graphique va débuter dans %s secondes"
+_mi_install2="Appuyer sur une touche pour continuer l'installation ( poursuite dans %s secondes )"
+_pass_msg="Ajout de l'utilisateur %s et création des mots de passe"
+_finalisation="Finalisation de l'installation"
+_recompile_nfs="Recompilation du noyau pour NFS root..."
+_exec_custom="Execution des commandes personnels..."
+_chroot_newroot_msg="Vous êtes maintenant dans votre nouvel environnement !
+	Executez \"bash /tmp/files/custom\""
+_finish_ok="L'installation est terminé !" 
+_choix_finish=("Reboot" "Shutdown" "Recommencer" "Recommencer en mode interactif" "Effacer les fichiers temporaires et recommencer" "Extras %s" "Éditer les fichiers" "Voir les commandes executées" )
+_show_logs="Consulter les logs"
+
+# DEBIAN
+_defaultdv="$_defaultdm"
+_select_dv="Installer quelle version de Debian ?"
+# _debootstrap="Installer debootstrap ?"
+# _choix_finish="Que voulez vous faire ?\n\t1) Reboot\n\t2) Shutdown\n\t3) Recommencer\n\t4) Recommencer en mode interactif\n\t5) Effacer les fichiers temporaires et recommencer\n\t6) Extras %s\n\t7) Éditer les fichiers\n\t8) Consulter les logs\n\t*) Sortir\n\t-> "
+
+# Que voulez vous faire ?\n\t1) Redémarrer\n\t2) Recommencer\n\t3) Chroot %s\n\t4) Éteindre\n\t6) Effacer les fichiers temporaires et recommencer\n\t7) Consulter les log\n\t*) Virtual Console\n\t*) Nothing\n\t "
+# Que voulez vous faire ?\n\t1) Reboot\n\t2) Shutdown\n\t3) Recommencer\n\t4) Recommencer en mode interactif\n\t5) Effacer les fichiers temporaires et recommencer\n\t6) Chroot %s\n\t7) Consulter les logs\n\t*) Sortir\n\t-> 

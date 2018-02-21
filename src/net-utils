@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Check for Network manager service enabled and disable it...
+netman_check() {
+	check_command -q "$1" && 
+	systemctl is-enabled $1 --quiet && 
+	systemctl disable $1 && 
+	caution "$1 a été désactivé..."
+	return $?
+}
+
+# Check for Network manager service running and stop it...
+netman_stop() {
+	check_command -q "$1" && 
+	systemctl is-active $1 --quiet && 
+	rid_continue "Couper $1 ?" && 
+	systemctl stop $1
+	return $?
+}
+
+list_if() {
+	IFACES=""
+	TFACES=()
+# 	The command "lspci | grep Ethernet | awk '{print $1}' | sed "s/0\(.*\):0/enp\1s/" | sed "s/\..*//"" list all network interfaces and transform them into udev terminology
+# 	for i in $(ip addr | egrep '^[^ ]' |  awk '{print $2}' | sed "s/://g"  ); do
+
+# Premiere partie
+# 	echo "enp$((16#$(lspci | grep Ethernet | awk '{print $1}' | sed "s/\(.*\):.*/\1/" | sed "s/\..*//" ) ))s"
+	[[ "$1" != "wifi" ]] && 	
+		for i in $( lspci | grep Ethernet | awk '{print $1}' ); do
+			iface=$(echo "enp$((16#$(echo $i | sed "s/\(.*\):.*/\1/" | sed "s/\..*//" ) ))s$((16#$(echo $i | sed "s/.*:\(.*\)\..*/\1/" | sed "s/\..*//" ) ))")
+			# j le nombre de connexion...
+			j=$((j+1))
+			valid_iface[$iface]="$j"
+			valid_iface[$j]="dhcpcd@$iface"
+			TFACES=( "${TFACES[@]}" "dhcpcd@${iface} $( ip addr | grep $i -A 2 | grep "inet " | awk '{print $2}' | sed "s/\(.*\)/( \1 )/" )")
+			IFACES="${IFACES}\t$j) dhcpcd@${iface} $( ip addr | grep $i -A 2 | grep "inet " | awk '{print $2}' | sed "s/\(.*\)/( \1 )/" )\n"
+		done
+	[[ "$1" != "eth" ]] && 
+		for i in $( ip addr | grep "^[0-9]: w" | sed "s/^.*: \(.*\):.*/\1/g" ); do
+			if [[ "$i" != "lo" ]]; then
+				iface=$i
+				j=$((j+1))
+				valid_iface[$iface]="$j"
+				valid_iface[$j]="wifi@$iface"
+				TFACES=( "${TFACES[@]}" "WiFi: ${iface} $( ip addr | grep $i -A 2 | grep "inet " | awk '{print $2}' | sed "s/\(.*\)/( \1 )/" )")
+				IFACES="${IFACES}\t$j) WiFi: ${iface} $( ip addr | grep $i -A 2 | grep "inet " | awk '{print $2}' | sed "s/\(.*\)/( \1 )/" )\n"
+			fi
+		done
+	[[  -z $IFACES ]] && return 1
+	return 0
+} 
+
+ask_if() {
+	local if2return;
+# Si on ne trouve qu'une seule interface, alors inutile d'effectuer la selection...
+    [[ -z "${valid_iface[2]}" ]] && if2return=${valid_iface[1]//wifi@/} && rid_continue "Utiliser l'interface \"%s\" ?" "$if2return" && printf "$if2return" && return 0;
+    if2return=""
+	msg_nn "$(rid_menu -q "Sélection d'une interface." "${TFACES[@]}")" 
+	while [[ -z "$if2return" ]]; do
+		if2return="$( rid "Choisissez l'interface à utiliser. Type '%s' to quit" "q" )"
+		[[ "$if2return" == "q" ]] && printf "\n" && return 1
+		if [[ ! -z "$if2return" && ! -z ${valid_iface[$if2return]} ]]; then
+			if2return=${valid_iface[$if2return]}
+			if2return=${if2return//wifi@/}
+			if2return=${if2return//dhcpcd@/}
+			msg_n "32" "32" "L'interface \"%s\" a ete choisi !" "$if2return"
+		else
+			 [[ ! -z "$if2return" ]] && choix2error "L'interface \"%s\" n'existe pas !" "$if2return"
+			if2return=""
+		fi
+	done
+	printf $if2return;
+	return 0;
+}
+
+declare -A valid_iface

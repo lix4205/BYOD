@@ -1,0 +1,13 @@
+[Unit]
+Description=Auto X Session
+After=systemd-user-sessions.service plymouth-quit.service
+
+[Service]
+ExecStart=/media/srv/dists-extra/extras/auto_launcher.sh %I 
+IgnoreSIGPIPE=no
+# BusName=org.freedesktop.DisplayManager
+TimeoutStopSec=0
+TimeoutStartSec=0
+
+[Install]
+Alias=display-manager.service

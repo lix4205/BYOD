@@ -1,0 +1,151 @@
+#!/bin/bash
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Run a command and display or not("$1"="-q") the output...
+# Write the command in the specified file 
+# TODO Utiliser exec2eof pour inscrire dans les fichiers...
+exe() { local op= file= command="$@"; 
+[[ "$1" == "-q" ]] && { shift; (( ! $NO_EXEC )) && { exe_quiet "$@"; return $?; }; }
+[[ "$1" == ">>" || "$1" == ">" ]] && op=$1 && file=$2 && command="$op $2" && shift 2 && command="$@ $command"; 
+[[ ! -z $FILE_COMMANDS ]] && echo_command $op $file $@ || echo "$@ $op $file" ;
+(( ! $NO_EXEC )) && { [[ "$op" == ">>" ]] && "$@" >> $file; [[ "$op" == ">" ]] && "$@" > $file; [[ "$op" == "" ]] && "$@" >&2; return $?; } || return 0;
+}
+
+# Convert special character for write valid commands in $FILE_COMMANDS
+double_char() {
+	local txt2return="$@" op= file=
+	[[ "$1" == ">>" || "$1" == ">" ]] && op=$1 && file=$2 && shift 2 && txt2return="$@"; 
+	txt2return="${txt2return//\\/\\\\}"
+	txt2return="${txt2return//\"/\\\"}"
+	txt2return="${txt2return//\$/\\\$}"
+	txt2return="${txt2return//\(/\\\(}"
+	txt2return="${txt2return//\)/\\\)}"
+	txt2return="${txt2return//\#/\\\#}"
+	txt2return="${txt2return//\</\\\<}"
+	txt2return="${txt2return//\>/\\\>}"
+	echo "$txt2return $op $file"
+}
+
+# Check if "$1" is running
+is_running() {
+	[[ ! -z $1 ]] && kill -0 $1 >> /dev/null 2>&1 && return 0
+	return 1
+}
+
+# Run command in quiet mode, user can follow output by pressing any key
+exe_quiet() { 
+	local pid_loading pid_main show_exit; 
+	PID_LOCAL=
+	echo "# $@" >> $LOG_EXE; 
+	loadexe "$@" & pid_main=$! && disown; 
+	[[ -e $FILE_COMMANDS ]] && echo_command $@ || echo "$@ $op $file" ;
+	PID2KILL+=" $pid_main"
+	msg_nn "Tapez Entree pour voir la sortie..."
+	while kill -0 $pid_main >> /dev/null 2>&1; do 
+		! is_running $PID_LOCAL && { loading_display & PID_LOCAL=$! && disown; } 
+		read -n 1 -s -t 1 show_exit && show_exit "$pid_main" "$PID_LOCAL" && msg_nn "Tapez Entree pour voir la sortie..." 
+	done
+	RES_LOAD=$(cat /tmp/.resload)
+	res=$?
+	is_running $PID_LOCAL && kill $PID_LOCAL
+	PID2KILL=
+	rm /tmp/.resload
+	clear_line
+	return $RES_LOAD;
+}
+# Display the output of the command in exe_quiet
+show_exit() {
+	local pid_tail show_exit
+	kill $2 >> /dev/null 2>&1
+	clear && msg_n "Vous pouvez arreter la sortie en appuyant sur une touche..." && sleep 1
+	tail -f $LOG_EXE & PID_LOAD=$! && disown
+	while [[ -z $show_exit ]] && kill -0 $1 >> /dev/null 2>&1; do read -n 1 -s -t 1 show_exit; done
+	kill $PID_LOAD >> /dev/null 2>&1
+	return 0
+}
+# Write the command in "$FILE_COMMANDS" and run it...
+exe_of() { 
+	[[ -e $FILE_COMMANDS ]] && echo_command "$1" || echo "$1" ; 
+	${1}
+	return $?; 
+}
+# Write the command in "$FILE_COMMANDS";
+echo_command () {	echo "$(double_char "$@")" >> $FILE_COMMANDS && return 0; }
+
+# TODO TOUT VIRER OU TOUT REFAIRE...
+# Display a small loading feature
+loading_display() { print() { printf "\b%s" "$1">&2; sleep .075; }; printf "%s" "  " >&2 && while true; do print "|"; print "\\"; print "-"; print "/";  done; };
+
+loading () {
+	local mess_beg="" mess_end="" commande=() saut=; 
+	[[ -z $1 ]] && loading_display; 
+	[[ "$1" == "\r" ]] && saut="$1" && shift; 
+	! command -v "$1" > /dev/null && mess_beg="${1//beg=/}" && shift; 
+	! command -v "$1" > /dev/null && mess_end="${1//end=/}" && shift; 
+	while [[ ! -z $1 ]] && ! command -v "$1" > /dev/null; do 
+		[[ "$1" =~ ^err= ]] && mess_err="${1//err=/}" && shift; 		
+		commande+=("$1") && shift; 
+	done
+	[[ -z $1 ]] && error  "31" "31"  "%s n'est pas une commande valide" "$@" && return 1; 
+	[[ "$mess_beg" == "" ]] && mess_beg="# %s"; 
+	[[ "$mess_end" == "" ]] && mess_end="%s terminé !" && commande="$@"; 
+	[[ "$mess_err" == "" ]] && mess_err="%s a rencontré une erreur !\n==> Consulter le fichier $LOG_EXE pour plus d'information"; 
+	echo "# $@" >> $LOG_EXE; 
+	loadexe "$@" & PID_LOAD=$!; 
+	msg_nn2 "\r" "$mess_beg" "${commande[@]}"; loading & PID_LOCAL=$!;renice -n 15 $PID_LOCAL >> /dev/null; wait $PID_LOAD;  disown; kill $PID_LOCAL; PID_LOAD=0; RES_LOAD=$(cat /tmp/.resload)
+	clear_line ; 
+	[[ $RES_LOAD -eq 0 ]] && [[ -z $saut ]] && msg_n  "32" "32"  "$mess_end" "${commande[@]}"; 
+	[[ $RES_LOAD -gt 0 ]] && error "$mess_err" "$*"; 
+	return $RES_LOAD; 
+}
+
+# Write the result of "command &" in a file...
+loadexe() {
+	"$@" >> "$LOG_EXE" 2>&1; RES_LOAD=$?; echo -n $RES_LOAD > /tmp/.resload;
+}
+
+# Helper function to run a command if "$1" is true
+maybe_doit() {
+  local cond=$1; shift
+  if eval "$cond"; then
+    ${@}
+    return $?
+  fi
+  return 1
+}
+
+# Another version of exe command can be ssh, chroot, bash, bluetoothctl...
+exec2eof() {
+	local command=$1; 
+	shift; 
+	[[ ! -z $FILE_COMMANDS ]] && [[ "$command" == "/bin/bash" ]] && { echo -e "${@}" >> $FILE_COMMANDS; } || { echo -e "$command <<EOF\n${@}\nEOF" >> $FILE_COMMANDS; }
+	${command} <<EOF 
+		${@}
+EOF
+}
+# Execute command then write it in $LOG_EXE or in /dev/null
+exec2file() { local file="$1"; shift; "${@}" >> "$file"; return $?; }
+exec2null() { exec2file /dev/null "${@}"; return $?; }
+# Execute command as a particular user
+exec4user() { local _user="$NAME_USER"; [[ -z $_user ]] && _user="$1" && shift; su - $_user -c "$@"; }
+# Execute command as a particular user with exec2eof
+exec4user2eof() { local _user="$NAME_USER"; [[ -z $_user ]] && _user="$1" && shift; exec2eof "su - $_user" "$@"; }
+
+# Output file to write commands
+[[ -z $FILE_COMMANDS ]] && FILE_COMMANDS="/tmp/commandes.log"
+# Output file to write output command
+[[ -z $LOG_EXE ]] && LOG_EXE="/tmp/sortie.log"
+# NO_EXEC=1 wont run any of commands...
+NO_EXEC=0

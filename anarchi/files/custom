@@ -1,0 +1,184 @@
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+# This script is executed at the end of the installation
+# Don't forget you are chrooted in the fresh install while it run
+# 
+# Some variables you can use :
+# 	Username : NAME_USER=
+# 	Les services systemd SYSTD_SOFT=
+# 	Le disque sur lequel grub sera installé GRUB_DISK=
+# 	L'interface reseau choisie NFSROOT=
+# 	L'environnement de bureau DE=
+#	L'architecture de la distribution ARCH=
+# 	Le display manager DM=
+# 	Le codage clavier X11 $X11_KEYMAP=
+#
+#
+
+# BEGIN SYSTEM CONFIG
+if [[ "$1" == "" ]]; then
+	# BEGIN PXE entry and BACKGROUND in GRUB 
+	if [[ -e /etc/grub.d/40_custom ]]; then
+		cp /tmp/files/extras/ipxe* /boot/
+		# TODO !!!! Détecter la bonne partition...
+		PXE_ENTRY="\n\nmenuentry \"ipxe\" {\n\tset root='(hd0,1)'\n\tlinux16  /ipxe.lkrn\n}"
+		if ! mountpoint -q /boot; then
+			PXE_ENTRY="\n\nmenuentry \"ipxe\" {\n\tset root='(hd0,1)'\n\tlinux16  /boot/ipxe.lkrn\n}"
+		fi
+		echo -e "$PXE_ENTRY" >> /etc/grub.d/40_custom
+
+		# random BACKGROUND IMAGE
+		IMG_AP_HOME=$(find "/tmp/files/imgs/" -maxdepth 1 -type f | shuf | head -n 1 )
+		EXT_BG_NAME=$( echo "$IMG_AP_HOME" | sed "s/.*\.//")
+		BG_NAME="bg.$EXT_BG_NAME"
+		cp "$IMG_AP_HOME" /boot/$BG_NAME
+		sed -i "s/#GRUB_BACKGROUND=.*/GRUB_BACKGROUND=\"\/boot\/$BG_NAME\"/" /etc/default/grub
+	fi
+	# END
+
+	# BEGIN ~/.bashrc configuration
+	# Color Bash Prompt
+	sed -i "s/PS1=.*$/PS1='\\\[\\\033\[01;32m\\\]\\\u@\\\h\\\[\\\033\[00m\\\]:\\\[\\\033\[01;37m\\\]\\\w\\\[\\\033\[00m\\\]\\\$ '/" "/etc/skel/.bashrc"
+
+	# Alias tout le monde
+	echo  "alias grep=\"grep --color\"" >> "/etc/skel/.bashrc"
+	
+	# Copie de .bashrc dans root pour le terminal root en couleur
+	cp /etc/skel/.bash* "/root/"
+	# Modification de la couleur pour l'user
+	sed -i "s/PS1=.*$/PS1='[\\\[\\\033\[01;31m\\\]\\\u@\\\h\\\[\\\033\[00m\\\]:\\\[\\\033\[01;34m\\\]\\\w\\\[\\\033\[00m\\\]]\\\\\$ '/" "/root/.bashrc"
+	
+	# Alias utilisateur
+	echo  -e "\n\nalias su=\"su -\"" >> "/etc/skel/.bashrc"
+	# nano editor for yaourt
+	echo -e "export VISUAL=\"nano\""  >> "/etc/skel/.bashrc"
+	# END
+
+	# BEGIN configuration personnelle
+
+	# PGUP et PGDOWN becomes history search terminal
+	sed -i "s/beginning-of-history/history-search-backward/g" /etc/inputrc
+	sed -i "s/end-of-history/history-search-forward/g" /etc/inputrc
+    # Pour DEBIAN
+    if [[ ! -z $DEBIAN_INSTALL ]]; then
+        sed -i "s/#\(.*history-search-backward\)/\1/g" /etc/inputrc
+        sed -i "s/#\(.*history-search-forward\)/\1/g" /etc/inputrc 
+    fi
+
+    # # END
+	exit
+fi
+# END
+
+# BEGIN USER CONFIG
+# Par defaut :
+# - Installe les paquets de yaourt (DECONSEILLÉ)
+# - Ajoute un fond d'ecran pour lightdm
+# - Configure xinitrc, pour slim, et nodm
+# - Lance le fichier custom.d/$NAME_USER
+
+# BEGIN binary paths session 
+# Used to complete xinitrc for slim and nodm
+if [[ $DM == "slim" ]] || [[ $DM == "xdm" ]] || [[ $DM == "nodm" ]]; then
+    declare -A binde=(
+        [plasma]="startkde"
+        [gnome]="gnome-session"
+        [cinnamon]="cinnamon-session"
+        [mate]="mate-session"
+        [lxde]="startlxde"
+        [xfce]="startxfce4"
+        [lxqt]="startlxqt"
+        [fluxbox]="startfluxbox"
+        [enlightenment]="enlightenment_start"
+        [deepin]="startdde"
+        [budgie-desktop]="budgie-desktop"
+        [i3]="i3"
+#         [node]="node"
+    )
+fi
+# END
+
+# BEGIN  install packages in files/de/yaourt.conf via AUR. 
+# files/de/yaourt.conf is empty by default 
+if [ "$LIST_YAOURT" != "" ]; then
+	rep=
+	while [[ "$rep" == "" ]]; do
+		echo -en "\033[01;37m  -> Install AUR packages Y/n ?\033[00m ( $LIST_YAOURT ) "
+		read -n 1 rep
+		case "$rep" in 
+			o|O|y|Y)
+				echo "$LIST_YAOURT install" 
+				su $NAME_USER -c "yaourt --arch $ARCH -Sy --noconfirm $LIST_YAOURT"
+				break				
+			;;
+			n|N) break;;
+			*) rep= ;;
+		
+		esac
+	done
+fi
+# END
+
+# BEGIN configurations by the display-manager
+case $DM in
+    slim) su $NAME_USER -c "echo \"exec ${binde[$DE]}\" > /home/$NAME_USER/.xinitrc" ;;
+    xdm) 
+        su $NAME_USER -c "echo \"exec ${binde[$DE]}\" > /home/$NAME_USER/.xsession;chmod +x /home/$NAME_USER/.xsession" 
+        
+    ;;
+    nodm) 
+        sed -i "s/^NODM_USER=.*/NODM_USER=$NAME_USER/" /etc/nodm.conf
+        sed -i "s/^NODM_XSESSION=.*/NODM_XSESSION=\/home\/$NAME_USER\/.xinitrc/" /etc/nodm.conf
+        su $NAME_USER -c "echo \"exec ${binde[$DE]}\" > /home/$NAME_USER/.xinitrc && chmod +x /home/$NAME_USER/.xinitrc" 
+        echo "#%PAM-1.0
+
+auth      include   system-login
+account   include   system-login
+password  include   system-login
+session   include   system-login" > "/etc/pam.d/nodm"
+    ;;
+#     sddm)
+# #     BEGIN		Generate sddm.conf and change theme...
+#         sddm --example-config > /etc/sddm.conf
+#         sed -i "s/maui/breeze/" /etc/sddm.conf
+#                   ... or activate the automatic logon
+#         sed -i "s/User=.*/User=$NAME_USER/" /etc/sddm.conf
+#         sed -i "s/Session=.*/Session=$DE.desktop/" /etc/sddm.conf
+# #     END
+#     ;;
+    lightdm) 
+#         BEGIN random background LIGHTDM    
+            IMG_BG=$(find "/tmp/files/imgs/" -maxdepth 1 -type f | shuf | head -n 1 )
+            EXT_BG_NAME=$( echo "$IMG_BG" | sed "s/.*\.//")
+            BG_NAME="bg.$EXT_BG_NAME"
+            cp "$IMG_BG" /usr/share/pixmaps/$BG_NAME
+            sed -i "s/.*background=.*/background=\/usr\/share\/pixmaps\/$BG_NAME/" "/etc/lightdm/lightdm-gtk-greeter.conf"                
+#         END		
+    ;;
+# 		gdm) : ;;
+# 		lxdm) : ;;
+esac
+# END
+
+CUSTOM_USER_SCRIPT="/tmp/files/custom.d/$NAME_USER"
+
+# # BEGIN execute files/custom.d/$NAME_USER
+if [[ -e "$CUSTOM_USER_SCRIPT" ]]; then
+    echo "  -> Lancement de $CUSTOM_USER_SCRIPT"
+    source "$CUSTOM_USER_SCRIPT"
+    echo "  -> $CUSTOM_USER_SCRIPT à terminé !"
+fi
+# # END
+

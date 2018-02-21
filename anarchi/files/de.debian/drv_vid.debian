@@ -1,0 +1,100 @@
+
+declare -A envir=( 
+# BEGIN 
+    #Lightdm package
+	[pack_lightdm]="$PACK_LIGHTDM" 
+	[pack_xdm]="$PACK_XDM" 
+      
+	#PLASMA 5
+	[dm_plasma]="sddm" 
+	[syst_plasma]="sddm" 
+	[netm_plasma]="$NET_PLASMA"
+	#KDE4
+# 	[syst_kde4]="kdm"
+# 	[netm_kde4]="kdeplasma-applets-plasma-nm wireless_tools"
+	#Cinnamon
+	[dm_cinnamon]="$PACK_LIGHTDM" 
+	[syst_cinnamon]="lightdm"
+	[netm_cinnamon]="$NET_GNOME"
+	#GNOME
+	[dm_gdm]="gdm" 
+	[syst_gnome]="gdm"
+	[netm_gnome]="$NET_GNOME"
+	#MATE
+	[dm_mate]="$PACK_LIGHTDM" 
+	[syst_mate]="lightdm"
+	[netm_mate]="$NET_MATE"
+	#LXDE
+	[dm_lxde]="lxde" 
+	[syst_lxde]="lxdm"
+	[netm_lxde]="$NET_LXDE"
+	#XFCE
+	[dm_xfce]="$PACK_LIGHTDM" 
+	[syst_xfce]="lightdm"
+	[netm_xfce]="$NET_XFCE"
+	#LXQT
+	[dm_lxqt]="sddm" 
+	[syst_lxqt]="sddm"
+	[netm_lxqt]="$NET_LXQT"
+	#Fluxbox
+	[dm_fluxbox]="slim" 
+	[syst_fluxbox]="slim"
+	[netm_fluxbox]="$NET_XFCE"
+	# Enlightenment
+	[dm_enlightenment]="$PACK_LIGHTDM" 
+	[syst_enlightenment]="lightdm"
+	[netm_enlightenment]="$NET_LXQT"
+	# Deepin
+# 	[dm_deepin]="lightdm lightdm-deepin-greeter"
+	[dm_deepin]="$PACK_LIGHTDM" 
+	[syst_deepin]="lightdm"
+# 	[netm_deepin]="$NET_LXQT"
+	# Budgie-desktop
+	[dm_budgie-desktop]="$PACK_LIGHTDM" 
+	[syst_budgie-desktop]="lightdm"
+	[netm_budgie-desktop]="$NET_GNOME"
+	# i3
+	[dm_i3]="$PACK_XDM" 
+	[syst_i3]="xdm"
+	[netm_i3]="$NET_GNOME"
+# END
+# Debian default branche
+    [dv_default]="$DEBIAN_DEFAULT"
+)
+
+declare -A graphic_drv=(
+# BEGIN 
+	[0]=1
+	[intel]=1
+	[ati]=1
+	[radeon]=1
+	[nouveau]=1
+	[nv]=0
+	[nvidia]=1
+	[nvidia-304xx]=1
+	[nvidia-304]=1
+	[nvidia-340xx]=1
+	[nvidia-340]=1
+	[all]=1
+	[vb]=1
+	[virtualbox]=1
+	[_0]=""
+	[_intel]="$DRV_INTEL $DRV_MESA"
+	[_all]="$DRV_ALL $DRV_MESA"
+	[_ati]="$DRV_ATI $DRV_MESA"
+	[_radeon]="$DRV_ATI $DRV_MESA"
+	[_nouveau]="$DRV_NOUVEAU $DRV_MESA"
+	[_nv]=0
+	[_nvidia]="$DRV_NV"
+	[_nvidia-304xx]="$DRV_NV304"
+	[_nvidia-304]="$DRV_NV304"
+	[_nvidia-340xx]="$DRV_NV340"
+	[_nvidia-340]="$DRV_NV340"
+	[_vb]="$DRV_VIRTUALBOX $DRV_MESA"
+	[_virtualbox]="$DRV_VIRTUALBOX $DRV_MESA"
+	
+	[name_vb]="virtualbox"
+	[name_radeon]="ati"
+	[name_nv]="nvidia"
+# END
+)

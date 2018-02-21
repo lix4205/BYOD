@@ -1,0 +1,14 @@
+[Desktop Entry]
+Categories=Utility;
+Comment[fr_FR]=No comments needs
+Comment=No comments needs
+Exec=/usr/bin/node >> ~/.node.log
+GenericName[fr_FR]=No Desktop Environnment
+GenericName=No Desktop Environnment
+Icon=utilities-terminal
+Name[fr_FR]=No Desktop Environnment
+Name=No Desktop Environnment
+Terminal=false
+# TerminalOptions=
+Type=Application
+

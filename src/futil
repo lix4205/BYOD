@@ -1,0 +1,168 @@
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# 
+# Original out function from pacstrap still in use when we don't want colors
+out() { printf "$1 $2\n" "${@:3}"; }
+
+# out function with color and without \n # text_msg="\033[01;37m"
+out_n() { local type_msg="$1" color_type_msg="" fin="" text_msg="$TXTMSG" txt_2replace="" txt="" var_msg="\033[01;37m" fin_color="\033[00m"; shift; [[ "$1" == "\n" ]] && fin+="\n" && shift; while is_number "$1"; do color_type_msg="\\033[01;$1m"; is_number "$2" && var_msg="\033[01;$2m" && shift; shift; done; txt="$1" && shift; (( COLORED_PROMPT )) && type_msg="$color_type_msg$type_msg$fin_color"; (( COLORED_PROMPT )) && txt="$text_msg${txt//%s/$fin_color$var_msg%s$fin_color$text_msg}$fin_color"; CUR_POS=$(echo $(printf "$type_msg $txt$fin" "$@" | wc -m)); printf "$type_msg $txt$fin" "$@" >&2; }
+
+# Now I use the error/caution function with out_n
+error() { out_n "==> $_error:" "\n" "31" "31" "$@";  } >&2
+caution() { out_n "==> $_caution:" "\n" "31" "31" "$@"; } >&2
+die() { error "$@"; exit 1; }
+
+# Original msg, msg2 & die functions from pacstrap
+msg() { out "==>" "$@"; }
+msg2() { out "  ->" "$@";}
+# Like msg & msg2 but with color supports
+msg_n() {  out_n "==>" "\n" "33" "33" "$@"; }
+msg_n2() {  out_n "  ->" "\n" "33" "33" "$@"; }
+# Like msg_n but with a \n before ==>
+msg_ntin() { out_n "\n==>" "\n" "33" "33" "$@" ; }>&2
+# Like msg_n & msg_n2 but without \n
+msg_nn() {  local saut="" ; [[ "$1" =~ ^"\\" ]] && saut="$1" && shift; out_n "$saut==>"  "33" "33" "$@"; }
+msg_nn2() { local saut="" ; [[ "$1" =~ ^"\\" ]] && saut="$1" && shift; out_n "$saut  ->"  "33" "33" "$@";  }
+# To disable color for a normal text...
+msg_nc() {  COLORED_PROMPT=0; "${@}"; COLORED_PROMPT=1; }>&2
+# To disable color for a normal text...
+msg_nb() {  TXTMSG="\033[00m"; "${@}"; TXTMSG="\033[1m"; }>&2
+# To finish the line begun by msg_nn/msg_nn2!
+msg_nn_end() {  out "\033[1m$1" "$2\033[00m" "$3"; }>&2
+# Display error message for 1 second
+choix2error() { clear_line; msg_nn "31" "31" "$@" && sleep 1; clear_line; }
+
+# Display a menu
+rid_menu() { local i=0 msg_edit; [[ "$1" == "-q" ]] && QUIT=1 && shift; echo -n "$1"; shift; msg_edit="$( print_menu "${@}" )"; (( $QUIT )) && msg_edit+="\n\tq) $_q2quit"; echo "$msg_edit\n\t"; }
+print_menu() { local i=0 msg_edit; for m2a in "${@}"; do i=$((i+1)); msg_edit+="\n\t$i) $m2a"; done; echo "$msg_edit"; }
+
+# BEGIN "rid" function write a message and wait for an answer from the user
+rid() { local tab="  ->" fin=" "; [[ "$1" =~ ^\\ ]] && tab="$1" && fin="" && shift; out_n "\r$tab"  "33" "33" "$@"; printf "$fin" >&2; read retour; printf "$retour"; printf "\r" >&2; }
+rid_1() { msg_nn2 "\r" "$@"; printf " ">&2; read -n 1 retour; printf "$retour"; printf "\r" >&2; }
+
+# rid_yes_no ask yes or no to user and send the answer
+rid_yes_no () { local default="[ $_yes/${_no^} ]" saut="\n" exit=0 txt=; [[ "$1" == "exit" ]] && default="[ ${_yes^}/$_no ]" && exit=1 && shift; txt=$1 && shift; printf "\r" >&2; msg_nn2 "$txt $default" "$@"  >&2; printf " ">&2; read -n 1 retour; [[ "$retour" == ""  ]] && saut=""; (( ! $exit )) && [[ "${retour,}" == "$_no" || "$retour" == "" ]] && printf "$saut" >&2 && return 1; (( ! $exit )) && [[ "${retour,}" == "$_yes" ]] && printf "$saut" >&2 && return 0; (( $exit )) && [[ "${retour,}" == "$_no" ]] && printf "$saut" >&2 && return 1; (( $exit )) && [[ "${retour,}" == "$_yes" || "$retour" == "" ]] && printf "$saut" >&2 && return 0; return $( rid_yes_no $( (( $exit )) && echo "exit" ) "$txt" "$@" ); }
+
+# rid_exit use rid_yes_no to 	
+rid_exit () { rid_yes_no "exit" "$@" && return 1 || exit 2; }
+# rid_continue ask yes or no to user and send the answer
+rid_continue () { return $( rid_yes_no "exit" "$@" ); }
+# rid_pass ask passwords to user
+rid_pass() { msg_nn2 "$@"; printf " ">&2; read -s retour; echo "$retour"; printf "\n" >&2 ; }
+# Display a message then return user's entry if it's not empty
+# q to quit
+get_text() { local txt2return=""; while [[ "$txt2return" == "" ]]; do txt2return="$( rid "$@" )"; [[ "$txt2return" == "q" ]] && return 1; done; echo "$txt2return"; }
+
+# END rids functions
+
+# BEGIN OTHER
+decompte () { local time=$1 _optarg="$4" ret=0 nominute=0; shift; [[ -z "$_optarg" ]] && _optarg=" "; if ! is_number $time; then nominute=0; time=$((${time//m/}*60)); min=$((time/60)) && [[ $min -lt 10 ]] && min="0$min"; else [[ $time -lt 60 ]] && nominute=1; min=$((time/60)) && [[ $((time%60)) -eq 0 ]]; [[ $min -lt 10 ]] && min="0$min"; fi; while [[ $time -gt 0 ]]; do (( $nominute )) && [[ $time -lt 60 ]] && { sec=$time; [[ $sec -lt 10 ]] && sec="0$sec"; msg_nn2 "\r" "32" "32" "$1" "$time" && time=$((time-1)) && read -n 1 -t 1 -s TEXREAD && ret=1 && clear_line >&2 && msg_n "31" "31" "$_int_mes" && break; continue; } || { sec=$((time%60)); [[ $sec -lt 10 ]] && sec="0$sec"; msg_nn2 "\r" "32" "32" "$1" "$min:$sec"; time=$((time-1)); [[ $((time%60)) -eq 59 ]] && min=$((time/60)) && [[ $min -lt 10 ]] && min="0$min"; read -n 1 -t 1 -s TEXREAD && ret=1 && clear_line >&2 && msg_n "31" "31" "$_int_mes" && break; }; done; clear_line; (( ! $ret )) && [[ ! -z $2 ]] && msg_n "32" "32" "$2" "$_optarg"; return $ret; }
+
+# To clear a line (used by decompte)
+clear_line() { local i=0; until [[ $i -gt $CUR_POS ]]; do printf " \b\b" >&2; i=$((i+1)); done; } >&2
+# Display a message on Control + C
+ctrl_c() { [[ ! -z $PID2KILL ]] && kill $PID2KILL && msg_n "34" "34" "%s arrete(s) !" "$PID2KILL "; kill -0 $PID_LOAD 2> /dev/null && kill $PID_LOAD; [[ ! -e /tmp/futil.lock ]] && { touch /tmp/futil.lock && printf "\n" >&2 && exit 1; } || { rm /tmp/futil.lock;   }; msg_ntin "31" "31" "$1" ; exit 1; }
+# Return true if the param is a number...
+is_number() { local var=$1; expr $var + 0 1>/dev/null 2>&1; statut=$?; test $statut -eq 0 && return 0 || return 1; }
+
+# set color $2 for $1 and close color with $3
+set_color() { local text="$1"; local color="$2"; local fin_color="$3"; (( ! COLORED_PROMPT )) && color="" && fin_color=""; local colored_text="$color$text$fin_color"; echo "$colored_text"; }
+# if current user is not root then we launch the command in root... 
+# Désolé cette fonction marche pas très bien...  && rid_continue "$_switch_2_root"  && /bin/su -c $command
+is_root() { 
+	local command= res fin2end=0;
+# 	(( ! EUID == 0 )) && launchasroot ""
+	[[ "$1" == "1" ]] && fin2end=1 && shift; 
+	[[ ! -z "$1" ]] && { 
+		command="${@}"; 
+	} || {
+		command="$0"; 
+	}
+	(( ! EUID == 0 )) && { run_or_su "$command"; res=$?; (( $fin2end )) && exit $res || return $res; } || return 0;
+}
+run_or_su() {
+	if (( EUID == 0 )); then
+		${@}
+	else
+		rid_continue "$_switch_2_root" "${@}" && su_or_sudo "${@}"
+	fi
+	return $?
+}
+# Ca va pas le faire...
+su_or_sudo() {
+    sudo -v >> /dev/null && sudo "${@}" || su -c "${@}"
+}
+
+launchasroot() { rid_continue "$_switch_2_root" "${@}" && su - -c "${@}"; return $?; }
+# Check if the command in parameters exist...
+check_command() { local _quiet=0; [[ "$1" == "-q" ]] && _quiet=1 && shift; (( ! $_quiet )) && msg_nn2 "$_checking \"%s\"..." "$1"; command -v $1 >> /dev/null && { (( ! $_quiet )) && msg_nn_end "$_ok"; return 0; } || { (( ! $_quiet )) && msg_nn_end "$_fail"; return 1; } }
+
+# Check if the command in parameters exist and install it if not...
+exist_install() {
+    [[ -z $2 ]] && PROG=$1 || PROG=$2; 
+	check_command $1 || { 
+        rid_continue "Executer \"pacman -S --noconfirm $PROG\"" && { 
+            is_root "pacman -S $PROG" && loading pacman -S --noconfirm $PROG 
+            } 
+        } && return 0; 
+	return 1; 
+	}
+
+# if param "-r", then we write this file in a conveniant way for reading in /tmp/futil-readable.sh ...
+# if param "$1" et "$2" exists in filesystem, then we write this file in a conveniant way for reading in /tmp/futil-readable.sh ...
+futil() { local file_2_create="/tmp/futil-readable.sh"; [[ ! -z "$1" ]] && [[ "$1" == "-s" ]] && shift && search_pkg "$@"; [[ ! -z "$1" ]] && [[ "$1" == "-r" ]] && rid_continue "$_read_file $file_2_create" "$0"  && echo "#!/bin/bash" > $file_2_create && cat "$0"  | sed "s/; /;\n\t/g" | sed 's/() { /() {\n\t/' | sed "s/\t}/}/" >> $file_2_create && shift && msg_n "32" "32" "$_read_file_ok" "$file_2_create"; }
+
+# Search in pacman database and die if package does'nt exist !
+search_pkg () { PKGS=$@; ERR_PKG=""; for i in $PKGS; do pacman -Ss $i >> /dev/null || ERR_PKG="$ERR_PKG $i "; done; [[ $ERR_PKG != "" ]] && die "$_pkg_err\n\t%s" "$ERR_PKG "; }
+
+# Execute the command in param if NO_EXEC=0
+show_msg() {
+	(( ! $NO_EXEC )) && "${@}"
+}
+
+# END
+# Colors by default
+COLORED_PROMPT=1
+# Default text Color
+TXTMSG="\033[1m"
+# Current cursor position (use by out_n and clear_line)
+CUR_POS=0
+
+# Essentials variables...
+_yes="o"
+_no="n"
+_error="ERREUR"
+_caution="AVERTISSEMENT"
+_abort="Annulation..."
+_abortask="Annuler ?"
+_q2quit="Quitter"
+_switch_2_root="Executer \"%s\" avec le super utilisateur ?"
+_launch_as_root="Lancer cette commande \"%s\" pour continuer..."
+_not_root="Vous devez être \"%s\" pour continuer !"
+_checking="Cherche"
+_ok="ok"
+_fail="non trouvé !"
+
+_read_file="Copier le contenu de %s formaté dans"
+_read_file_ok="%s à été créé !"
+# _diff_ok="Les fichiers \"%s\" et \"%s\" sont identiques !"
+# _diff_fail="Les fichiers \"%s\" et \"%s\" sont différents !"
+_pkg_err="Following package(s) doesn't exist :"
+_int_mes="Interruption !"
+
+# Trap Control + C ans show a message
+trap "ctrl_c \"$_abort\n\"" INT
+
+[[ ! -z "$1" ]] && futil "$@"
+

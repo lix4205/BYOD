@@ -1,0 +1,168 @@
+##
+## 							
+## English Translation File		
+##								
+##
+## Written by Elie Coutaud (28-Nov-2015)
+##
+##
+
+#BASICS
+_yes="y"
+_no="n"
+_error="ERROR"
+_caution="WARNING"
+_abort="Aborted..."
+_continue="Continue"
+_delete_tmp="Delete temporary files ?"
+_go_on="Let's go ..."
+_preparation="Preparation..."
+_ok="ok"
+_fail="no"
+_launch_install="Launching /tmp/install/pacinstall.sh "
+_welcome="Another Arch Installer"
+_selected="\"%s\" selected"
+
+#SYSTEM REQUIEREMENT
+_check_init="Checking intial installation..."
+_checking="Checking for"
+_command_not_found="\"command\" not found. Check requirements skipped !"
+_requirement_missing="Requirement missing."
+_test_net="Internet connexion..."
+_net_conf_invalid="Network interface %s is invalid !"
+_arch_install_scripts="Install \"%s\" ?"
+_arch_install_scripts_ok="\"%s\" has been installed !"
+_nodir="No root directory specified"
+_invalid_option="'%s: invalid option -- '\''%s'\'"
+_argument_option="'%s: option '%s' requires an argument !"
+_install_ais_failed="Failed to install arch-install-scripts"
+_impossible="Unable to install a x64 kernel from a i686 kernel !"
+_yaourt_install="Prepare to install \n%s..."
+_set_timezone="Timezone selection"
+_set_consolek="Console keymap selection"
+_set_keymapX11="X11 keymap selection"
+_set_locale="Locale selection"
+_list_loading="Loading %s list..."
+_locale_checking="Checking \"%s\" Locale exist..."
+_locales_set="Locale $_selected"
+_timezone_checking="Checking \"%s\" Timezone exist..."
+_timezone_set="Timezone $_selected"
+_console_k_checking="Checking \"%s\" Console Keymap exist..."
+_console_k_set="Console keymap $_selected"
+_x11k_checking="Checking \"%s\" X11 Keymap exist..."
+_x11k_selected="X11 Keymap $_selected"
+_missing_file="File \"%s\" doesn't exist on the the system. Downloading ArchLinux Bootstrap Image."
+_choix_de="Enter a selection %s"
+_pageup=" ( shift + Page UP to view the top of the list )"
+_0_select=" ( empty to display hardware info )"
+
+#SYSTEM CONFIG
+_file_load="Load generated file ? (\"e\" to edit file)"
+_arch="Architecture selection."
+_arch_selected="%s architecture selected"
+_processor_i686="Set architecture to i686 ?"
+_env="Desktop Environnement selection"
+_env_set="Desktop Environnement $_selected"
+_defaultdm="Use \"%s\" ?"
+_select_dm="Display Manager selection"
+#\n1) plasma\n2) gnome\n3) kde4 (dropped !)\n4) xfce\n5) mate\n6) lxde"
+_hostname="Name machine ?"
+_hostname_set="\"%s\" as hostname"
+_username="User login ?"
+_username_set="\"%s\" as username"
+_net="Network interface to use ?"
+_net_selected="$_selected as network interface."
+_net_nm="Use \"NetworkManager\""
+_net_dhcp="Use \"dhcpcd\" ( Default )"
+_net_nfsroot="Nfs root"
+_graphic="Video driver ? (0 for none.)"
+_graphic_set="Vidéo driver $_selected"
+_graphic_none="No video driver selected !"
+
+# _graphic_list="\t0) Display hardware info and choose\n\t1) intel (xf86-video-intel)\n\t2) NVidia\n\t3) ATI (xf86-video-ati)\n\t4) Virtualbox ?"
+# _graphic_nv="\t0) None\n\t1) Free driver : \"xf86-video-nouveau\"\n\t2) Proprietary driver :\"nvidia\" ( GeForce 400 series end newer)\n\t3) Proprietary driver : \"nvidia-340xx\" (GeForce 8000/9000 and 100-300 series)\n\t4) Proprietary driver : \"nvidia-304xx\" (GeForce 6000/7000 series)"
+_graphic_nv=("Free driver : \"xf86-video-nouveau\"" "Proprietary driver :\"nvidia\" ( GeForce 400 series end newer)" "Proprietary driver : \"nvidia-340xx\" (GeForce 8000/9000 and 100-300 series)" "Proprietary driver : \"nvidia-304xx\" (GeForce 6000/7000 series)")
+_no_translation="Translation file \"%s.trans\" not found...loading \"%s.trans\"..."
+_set_pass_msg="Login setup"
+_pass_user1="%s password  ? "
+_pass_user2="Confirm " 
+_empty_pass="%s password is empty !"
+
+#ERROR !
+_grub_unable="Unable to install grub on disk"
+_mountpoint="%s is not a mountpoint !"
+_error_pass="Passwords doesn't match !"
+_not_a_dir="%s is not a directory !"
+_install_error="A problem occurs during installation !\n"
+_install_copie="A problem occurs while copying !"
+_install_ok="Installation finished !\n\nYou can use the command above to reinstall if you need\n%s\n"
+_bug_chroot="(BUG): attempting to overwrite existing EXIT trap"
+_pacman_fail="Failed to install packages to new root \"%s\""
+_failed_prepare_chroot="Failed to setup chroot %s"
+_invalid_param="Invalid parameters"
+_valid_choice="\"%s\" is unavalaible !"
+_pkg_err="Following package(s) doesn't exist :"
+_systd_error="Systemd services (%s) hasn't been enable !"
+_pass_unchanged="User %s already exists, passwords won't been changed"
+_no_internet="Internet is required to download packages list !"
+
+#RECAP
+# _util_command="Use directly this command to skip configuration steps"
+_util_command="The file \"%s\" has been created and contains the follwoing command :"
+_relaunch="Launch the command above when you'll get ready !\n\n%s\n"
+_grub_installed="Grub has been installed on disk "
+_grub_created="A grub configuration file is available in %s"
+_init_sudo="Setting \"%s\""
+
+#NOT BASED ARCH
+_bootstrap="Continue with ArchLinux bootstrap image ?"
+_launch_dl="Launching ArchLinux bootstrap image download."
+_downloading="Downloading archlinux bootstrap"
+_wget_missing="Any tools for downloading has been found !\nPlease install \"curl\" or \"wget\" to continue..."
+_archive_extract="Extracting archive..."
+_prepare_chroot="Installation preparation for chroot environnement"
+_chroot_i="Interactive mode enabled by \"-i\" option"
+_chroot_msg="Welcome to ArchLinux installation !
+	Type \"su\" then \"cd /install.arch/tmp/install\" then search in history to find and launch the command :
+	\"%s\"
+	Once \"./pacinstall\" has finished, logout twice by typing \"exit\" or do \"CTRL + D\"
+	Then you'll be \"chrooted\" in your fresh install."
+
+# TODO PAVE D'INFOS 
+_info_gen="Paramètres de l'installation :"
+_info_grub="Grub will be installed on device "
+_info_root="sera utilisé pour l'installation !"
+_info_arch="Architecture"
+_info_drv_vid="Graphique driver:"
+_info_net="Network configuration :"
+_info_de="Desktop environnement :"
+_info_hostname="Computer name"
+_info_user="User login"
+_info_base="Base installation"
+_info_complement="Packages"
+_info_yaourt="AUR packages"
+_info_systd="Systemd services"
+_info_cache="Directory \"%s\" will be used as cache packages"
+
+# INSTALLATION
+_creating_root="Creating install root at %s"
+_pacman_install="Installing packages to %s"
+_mi_install="Base installation is finished !"
+#_mi_install2="Graphic user interface installation will start in %s seconds"
+_mi_install2="Press any key to continue ( continue in %s seconds )"
+_pass_msg="Add user %s and change passwords"
+_finalisation="Finishing installation"
+_recompile_nfs="Recompiling kernel for NFS root..."
+_exec_custom="Execution des commandes personnels..."
+_chroot_newroot_msg="You are now in your new environnement !
+	Find and launch command \"/post_install-%s.sh\" in history"
+_grub_notinstalled="Grub is not installed !"
+_finish_ok="Installation is finished !" 
+# _choix_finish="Que voulez vous faire ?\n\t1) Reboot\n\t2) Shutdown\n\t3) Retry\n\t4) Retry in interactive mode \n\t5) Delete temporary files and try again\n\t6) Extras %s\n\t) Show logs\n\t*) Exit"
+
+_choix_finish=("Reboot" "Shutdown" "Retry" "Retry in interactive mode" "Delete temporary files" "Extras %s" "Edit files" "Show commands")
+_show_logs="Show logs"
+
+# DEBIAN
+_defaultdv="$_defaultdm"
+_select_dv="Installer quelle version de Debian ?"

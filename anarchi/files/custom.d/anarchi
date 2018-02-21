@@ -1,0 +1,104 @@
+# BEGIN USER CONFIG
+# Par defaut :
+
+# Vous pouvez decommentez certaines parties et les modifier à votre gré :
+# - Monter un partage nfs et l'inscrire dans /etc/fstab ***
+# - *** IMPORTANT ! Decommentez aussi la ligne concernant le demontage en fin de fichier 
+# - Ajouter un fichier configurant le clavier pour tuer le serveur X avec ctrl+alt+backspace 
+# - Copier des fichiers de configurations particuliers depuis le serveur NFS
+# - Installer des logiciels selon l'environnement de bureau installé
+
+
+# echo "Configuration personnalisé pour $NAME_USER..."
+
+# # BEGIN X11 KEYBOARD CONFIG ( Ctrl + Alt + backspace kill xserver)
+# # It's for a french keyboard ! Remove latin9 !!!
+# echo -e "Section \"InputClass\"\n\tIdentifier \"system-keyboard\"\n\tMatchIsKeyboard \"on\"\n\tOption \"XkbLayout\" \"${X11_KEYMAP}\"\n\tOption \"XkbModel\" \"pc105\"\n\tOption \"XkbVariant\" \"latin9\"\n\tOption \"XkbOptions\" \"terminate:ctrl_alt_bksp\"\nEndSection" > /etc/X11/xorg.conf.d/00-keyboard.conf
+# # END
+# 
+# # BEGIN Serveur NFS 
+# # Va inscrire dans fstab la ligne correspondant au montage permanent du partage NFS
+# # avec x-systemd.automount,x-systemd.device-timeout=1s
+# # I use this directory to mount my NFS server...
+# DIR_SRV=/media/srv
+# # ...with this IP...
+# IP_SRV="192.168.1.5"
+# # Write in fstab
+# ! cat /etc/fstab | grep -q $IP_SRV && 
+# echo -e "# $IP_SRV:/ on $DIR_SRV\n$IP_SRV:/	$DIR_SRV	nfs    x-systemd.automount,x-systemd.device-timeout=1s   0 0" >> /etc/fstab
+# # Creation du repertoire
+# [[ ! -e /media/srv ]] && 
+# mkdir -p /media/{srv,tmp} && 
+# echo "==> Creating directories /media/{srv,tmp}"
+# # Et on monte pour les configurations
+# echo "==> Wait while mounting $DIR_SRV" && 
+# mount $DIR_SRV
+# # END
+
+# # BEGIN VARIABLES, aliases in .bashrc
+# # 	su $NAME_USER -c "echo \"DIR_SRV=/media/srv
+# # 	DIR_SCR=\\\$DIR_SRV/scripts\" >> ~/.bashrc"
+# 
+# # Some aliases
+# # su $NAME_USER -c "echo -e \"# Some aliases\\nalias lsl=\\\"ls -l\\\"\nalias lsa=\\\"ls -a\\\" \" >> /home/$NAME_USER/.bashrc"
+# # END
+
+# # BEGIN Configuration utilisateur
+# # # On a monté le partage NFS pour copier les configurations personalisées...
+# # # CAUTION Ne pas oublier de démonter le partage ! Voir en fin de fichier...
+# # # Later, I'll copy my NAME_USER config from DIR_USR_CONF on my server...
+# # DIR_USR_CONF=$DIR_SRV/confs
+# # # Default user conf
+# # DEFAULT_USER="lix"
+# # 
+# # if [[ -e $DIR_USR_CONF/$NAME_USER ]]; then
+# #     su $NAME_USER -c "bash /tmp/files/extras/copyconf.sh \"$DIR_USR_CONF/$NAME_USER\" $NAME_USER $DE" 
+# #     su - $NAME_USER -c "cp -PR $DIR_USR_CONF/$NAME_USER/* ."
+# # elif [[ -e $DIR_USR_CONF/$DEFAULT_USER ]]; then 
+# #     su $NAME_USER -c "bash /tmp/files/extras/copyconf.sh \"$DIR_USR_CONF/$DEFAULT_USER\" $NAME_USER $DE"; 
+# #     su - $NAME_USER -c "cp -PR $DIR_USR_CONF/$DEFAULT_USER/* ."
+# # fi
+# # 
+# # [[ $? -eq 0 ]] && echo "==> La configuration de $NAME_USER à été créée !"
+# # END
+# 
+# # BEGIN configurations by the desktop-environnement
+# # Ici quelques commandes pour installer des terminal type quake et kdeconnect pour plasma
+# case $DE in
+# 	plasma)
+# 		echo -n "==> Installation de yakuake kdeconnect"
+# 		$pacman -Sy --noconfirm --needed yakuake kdeconnect >> $LOG_EXE 2>&1 && echo "...ok" || echo -e "...echec !\n==> Consultez $LOG_EXE  pour plus de détail"
+# 	;;
+# 	# Cinnamon has tilda as terminal
+# 	mate|xfce|gnome) 
+# 		echo -n "==> Installation de tilda"
+# 		$pacman -Sy --noconfirm --needed tilda >> $LOG_EXE 2>&1 && echo "...ok" || echo -e "...echec !\n==> Consultez $LOG_EXE  pour plus de détail"
+# 	;;
+# 	lxqt) : ;;
+# 	fluxbox) : ;;
+# esac
+# # END
+
+# # BEGIN Connexion automatique pour sddm et installation de kdeconnect pour plasma
+# 	case $DM in
+# 		sddm)
+#             [[ ! -e /etc/sddm.conf ]] && sddm --example-config > /etc/sddm.conf
+#             sed -i "s/User=.*/User=$NAME_USER/" /etc/sddm.conf
+#             sed -i "s/Session=.*/Session=$DE.desktop/" /etc/sddm.conf
+# 		;;
+# # 		gdm) : ;;
+# # 		lightdm) : ;;
+# # 		lxdm) : ;;
+# # 		slim) : ;;
+# 		nodm) :
+# 		;;
+# 	esac
+# # END
+
+# # BEGIN demontage du serveur
+# # On force le démontager du partage
+# until ! mountpoint -q $DIR_SRV; do        
+#         umount $DIR_SRV >> /dev/null 2>&1
+#         sleep 0.5
+# done
+# # END 
