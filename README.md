@@ -57,8 +57,8 @@ Toutefois vous pouvez passez les param&egrave;tres directement, voici une rapide
         <li><strong> -c </strong><span>&lt;cache_paquets&gt;</span><br />
         Utilisation des paquets contenu dans le dossier &lt;cache_paquets&gt;<br /><br /></li>			
         <!-- Other (Printing, Bluetooth, usefull softwares)-->
-        <li><strong>-s </strong>Gestion touchpad (xf86-input-synaptics)<br />
-        Disposition du clavier en console</li>
+        <li><strong>-S </strong><br />
+        Configure "sudo" for the main user.</li>
         <li><strong>-p</strong><br />
         Gestion imprimante ( cups )</li>
         <li><strong>-H</strong><br />
