@@ -358,7 +358,10 @@ graphic_setting () {
 				2) graphic_setting "nv" "1";;
 				3) DRV_VID="radeon" ;;
 				4) DRV_VID="virtualbox" ;;
-				"") lspci | grep VGA --color; rep=;;
+				"") 
+                    ! command -v lspci >> /dev/null && lspci | grep VGA --color || error "%s n'est pas installé !" "lspci"
+                    rep=
+                ;;
 				*) rep=
 			esac
 		done
@@ -822,8 +825,8 @@ if [[ "$1" == "debian" ]]; then
     
     # Needed by softs-trans
     # TODO Enlever ca !
-    CMD_SEARCH="apt" 
-    CMD_SEARCH_ARGS="search"
+#     CMD_SEARCH="apt" 
+#     CMD_SEARCH_ARGS="search"
     DEFAULT_CACHE_PKG="/var/cache/apt/archives"
     shift;
     files2source_drv="$DIR_SCRIPTS/files/de$DEBIAN_INSTALL/drv_vid"

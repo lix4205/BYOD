@@ -166,21 +166,21 @@ load_language() {
 anarchi_pac_sy() {
     loading chroot "$TMPROOT" pacman -Sy
 }
-show_pacman_for_lang_chroot() {
-	# Forme generique "nom_paquet-locale-pays" Ex : firefox-es-mx
-    PACK=$(chroot "$TMPROOT" pacman -Ss "$1-$3-$2" | grep "$1-$3-$2" | sed "s/.*\($1-$3-$2\).*/\1/");
-#     echo "1: $PACK : pacman -Ss $1-$3-$2 | grep $1-$3-$2"
-	# Pour la forme  "nom_paquet-locale-locale" Ex : firefox-es-es
-    [[ -z $PACK ]] && PACK=$(chroot "$TMPROOT" pacman -Ss "$1-$3-$3" | grep "$1-$3-$3" | sed "s/.*\($1-$3-$3.*\) .*/\1/");
-#     echo "2: $PACK"
-	# Pour la forme  "nom_paquet-locale" Ex : firefox-es
-    [[ -z $PACK ]] && PACK=$(chroot "$TMPROOT" pacman -Ss "$1-$3" | grep "$1-$3" | sed "s/.*\($1-$3.*\) .*/\1/" | head -n 1);
-	[[ -z $PACK ]] && return 1;
-#     echo "3: $PACK"
-	echo "$PACK";
-	return 0;
-}
-# END
+# show_pacman_for_lang_chroot() {
+# 	# Forme generique "nom_paquet-locale-pays" Ex : firefox-es-mx
+#     PACK=$(chroot "$TMPROOT" pacman -Ss "$1-$3-$2" | grep "$1-$3-$2" | sed "s/.*\($1-$3-$2\).*/\1/");
+# #     echo "1: $PACK : pacman -Ss $1-$3-$2 | grep $1-$3-$2"
+# 	# Pour la forme  "nom_paquet-locale-locale" Ex : firefox-es-es
+#     [[ -z $PACK ]] && PACK=$(chroot "$TMPROOT" pacman -Ss "$1-$3-$3" | grep "$1-$3-$3" | sed "s/.*\($1-$3-$3.*\) .*/\1/");
+# #     echo "2: $PACK"
+# 	# Pour la forme  "nom_paquet-locale" Ex : firefox-es
+#     [[ -z $PACK ]] && PACK=$(chroot "$TMPROOT" pacman -Ss "$1-$3" | grep "$1-$3" | sed "s/.*\($1-$3.*\) .*/\1/" | head -n 1);
+# 	[[ -z $PACK ]] && return 1;
+# #     echo "3: $PACK"
+# 	echo "$PACK";
+# 	return 0;
+# }
+# # END
 
 # BEGIN create new PGP keys to avoid install errors
 anarchi_gpg_init() {
@@ -263,10 +263,13 @@ run_once anarchi_pac_sy >> /dev/null || exit 1
 # BEGIN Recuperation des paquets de langue 
 # inscris dans le fichier /tmp/install/trans_packages
 # (pour kde, libreoffice, thunderbird et firefox)
-# NOTE La fonction set_trans_package se trouve dans files/trans_packages
+# NOTE La fonction set_trans_package se trouve dans files/soft_trans
 if [[ -e /tmp/install/trans_packages ]]; then
+    CMD_SEARCH="chroot $TMPROOT $CMD_SEARCH" 
+#     CMD_SEARCH_ARGS="search"
     while read -r; do
-        write_package "$(show_pacman_for_lang_chroot $(set_trans_package "$REPLY" "$LA_LOCALE"))" "files/de/common.conf"
+#         write_package "$(show_pacman_for_lang_chroot $(set_trans_package "$REPLY" "$LA_LOCALE"))" "files/de/common.conf"
+        write_package "$(show_pacman_for_lang $(set_trans_package "$REPLY" "$LA_LOCALE"))" "files/de/common.conf"
     done< <( cat "/tmp/install/trans_packages" )
 fi
 # END

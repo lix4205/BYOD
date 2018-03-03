@@ -164,7 +164,9 @@ session   include   system-login" > "/etc/pam.d/nodm"
             EXT_BG_NAME=$( echo "$IMG_BG" | sed "s/.*\.//")
             BG_NAME="bg.$EXT_BG_NAME"
             cp "$IMG_BG" /usr/share/pixmaps/$BG_NAME
-            sed -i "s/.*background=.*/background=\/usr\/share\/pixmaps\/$BG_NAME/" "/etc/lightdm/lightdm-gtk-greeter.conf"                
+            sed -i "s/.*background=.*/background=\/usr\/share\/pixmaps\/$BG_NAME/" "/etc/lightdm/lightdm-gtk-greeter.conf"
+            sed -i "s/.*position=.*/position=75% 75%/" "/etc/lightdm/lightdm-gtk-greeter.conf"
+
 #         END		
     ;;
 # 		gdm) : ;;

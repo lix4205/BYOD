@@ -43,7 +43,11 @@ function show_pacman_for_lang() {
 	return 0;
 }
 
-[[ -z "$CMD_SEARCH" ]] && CMD_SEARCH="pacman" && CMD_SEARCH_ARGS="-Ss"
+CMD_SEARCH=${CMD_SEARCH-pacman}
+CMD_SEARCH_ARGS=${CMD_SEARCH_ARGS-"-Ss"}
+
+# echo "$CMD_SEARCH $CMD_SEARCH_ARGS"
+# [[ -z "$CMD_SEARCH" ]] && CMD_SEARCH="pacman" && CMD_SEARCH_ARGS="-Ss"
 # echo "fr_FR French"
 # 	show_pacman_for_lang "libreoffice" "fr" "fr"
 # echo "fr_FR French"

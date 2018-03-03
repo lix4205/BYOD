@@ -181,8 +181,25 @@ anarchi_passwd() {
 }
 
 anarchi_search_pkg_deb() {
+    # BEGIN Recuperation des paquets de langue 
+    CMD_SEARCH="chroot $RACINE apt" 
+    CMD_SEARCH_ARGS="search"
+    
+    source files/softs-trans
+       
+# lit dans le fichier /tmp/install/trans_packages (voir linux-parts)
+# (pour kde, libreoffice, thunderbird et firefox)
+# NOTE La fonction set_trans_package se trouve dans files/soft_trans
+if [[ -e /tmp/install/trans_packages ]]; then
+    while read -r; do
+        yaourt_args+=( "$(show_pacman_for_lang $(set_trans_package "$REPLY" "$LA_LOCALE"))" )
+    done< <( cat "/tmp/install/trans_packages" )
+fi
+# END
+
+    
 # 	die "$yaourt_args"
-	for i in $yaourt_args; do chroot "$RACINE" apt search $i | grep -q $i  || ERR_PKG="$ERR_PKG $i "; done;
+	for i in ${yaourt_args[*]}; do chroot "$RACINE" apt search $i | grep -q $i  || ERR_PKG="$ERR_PKG $i "; done;
 	[[ $ERR_PKG != "" ]] && return 1;
 	return 0
 }
@@ -257,6 +274,7 @@ declare -A real_arch=(
 	[db_i386]="i386" 
 )
 	
+
 DEFAULT_CACHE_PKG="/var/cache/apt/archives"
 # NAME_SCRIPT="pacinstall.sh"
 # FILES2SOURCE="files/src/doexec files/src/chroot_common.sh files/src/futil files/src/bash-utils.sh files/drv_vid"
