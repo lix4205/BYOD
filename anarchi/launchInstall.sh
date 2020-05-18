@@ -120,19 +120,21 @@ download_img () {
 		msg_n "$_launch_dl"
 		if [[ ! -f "$FILE_BOOTSTRAP" ]]; then
 			WGET="curl $URL_BOOTSTRAP -o $FILE_BOOTSTRAP"
-			check_command "curl" || {
+# 			check_command "curl" || {
 				check_command "wget" && {
 						WGET="wget $URL_BOOTSTRAP -O $FILE_BOOTSTRAP"
 				} || {
 						die "$_wget_missing"
 				}
-			}
+# 			}
 			! [[ -e "$WORK_DIR" ]] && mkdir $WORK_DIR
 			cd "$WORK_DIR"
 			msg_nn2 "$_test_net"
 			ping -q -c 2 "www.archlinux.org" >/dev/null 2>&1
 			[[ $? -eq 0 ]] && msg_nn_end " $_ok" || msg_nn_end "$_fail"
 
+			echo "$WGET"
+# 			exit
 			# Downloading in background until user has information...
 			$WGET > /tmp/$NAME_ARCHIVE-$UNAMEM.tar.gz.log 2>&1 &
 			PID_WGET=$!		
@@ -410,7 +412,7 @@ choose_debvers() {
         msg_nn "$_select_dv"
         while [[ -z "$choix_dv" ]] || [[ -z ${envir[dv_$choix_dv]} ]]; do
             echo -e "$( print_menu "${DEBIANVERSION[@]}")"
-            choix_dv=$(rid "$_choix_dv")
+            choix_dv=$(rid "$_choix_de")
         done
 #         envir[syst_$DE]="${envir[dm_$choix_dm]}"
         msg_n "32" "32" "$_selected" "${envir[dv_$choix_dv]}"
@@ -816,6 +818,8 @@ declare -A yaourt_envir=(
 
 _needed_commands="arch-chroot arch-install-scripts" ;
 files2source=( "$DIR_SCRIPTS/files/src/bash-utils.sh" "$DIR_SCRIPTS/files/src/futil" "$DIR_SCRIPTS/files/src/doexec" "$DIR_SCRIPTS/files/src/net-utils" )
+# Fichier source des paquets de base, drivers et suite bureautique, client mail, navigateur.
+# Change selon la distribution...
 files2source_drv="$DIR_SCRIPTS/files/de/drv_vid"
 
 # BEGIN debootstrap configuration
@@ -823,16 +827,26 @@ if [[ "$1" == "debian" ]]; then
     DEBIAN_INSTALL=".debian" 
     _needed_commands="debootstrap"
     
-    # Needed by softs-trans
-    # TODO Enlever ca !
-#     CMD_SEARCH="apt" 
-#     CMD_SEARCH_ARGS="search"
     DEFAULT_CACHE_PKG="/var/cache/apt/archives"
     shift;
     files2source_drv="$DIR_SCRIPTS/files/de$DEBIAN_INSTALL/drv_vid"
 fi
-files2source+=("$files2source_drv")
 # END 
+
+# BEGIN debootstrap configuration
+# if [[ "$1" == "gentoo" ]]; then
+#     DEBIAN_INSTALL=".gentoo" 
+#     _needed_commands="emerge"
+#     
+#     DEFAULT_CACHE_PKG="/var/cache/apt/archives"
+#     shift;
+#     files2source_drv="$DIR_SCRIPTS/files/de$DEBIAN_INSTALL/drv_vid"
+# fi
+# END 
+
+
+
+files2source+=("$files2source_drv")
 
 # Usefull functions 
 # source $DIR_SCRIPTS/files/futil

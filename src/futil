@@ -124,7 +124,7 @@ exist_install() {
 futil() { local file_2_create="/tmp/futil-readable.sh"; [[ ! -z "$1" ]] && [[ "$1" == "-s" ]] && shift && search_pkg "$@"; [[ ! -z "$1" ]] && [[ "$1" == "-r" ]] && rid_continue "$_read_file $file_2_create" "$0"  && echo "#!/bin/bash" > $file_2_create && cat "$0"  | sed "s/; /;\n\t/g" | sed 's/() { /() {\n\t/' | sed "s/\t}/}/" >> $file_2_create && shift && msg_n "32" "32" "$_read_file_ok" "$file_2_create"; }
 
 # Search in pacman database and die if package does'nt exist !
-search_pkg () { PKGS=$@; ERR_PKG=""; for i in $PKGS; do pacman -Ss $i >> /dev/null || ERR_PKG="$ERR_PKG $i "; done; [[ $ERR_PKG != "" ]] && die "$_pkg_err\n\t%s" "$ERR_PKG "; }
+search_pkg () { PKGS=$@; ERR_PKG=""; for i in $PKGS; do $SEARCH_CMD $i >> /dev/null || ERR_PKG="$ERR_PKG $i "; done; [[ $ERR_PKG != "" ]] && die "$_pkg_err\n\t%s" "$ERR_PKG "; }
 
 # Execute the command in param if NO_EXEC=0
 show_msg() {
@@ -138,7 +138,8 @@ COLORED_PROMPT=1
 TXTMSG="\033[1m"
 # Current cursor position (use by out_n and clear_line)
 CUR_POS=0
-
+# Become apt search for debian
+SEARCH_CMD="pacman -Ss"
 # Essentials variables...
 _yes="o"
 _no="n"

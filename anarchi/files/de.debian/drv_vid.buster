@@ -35,7 +35,8 @@
 # #
 # DRV_ATI="xserver-xorg-video-ati"
 # DRV_INTEL="xserver-xorg-video-intel"
-# DRV_VIRTUALBOX="virtualbox-guest-utils virtualbox-guest-x11"
+# CAUTION Virtualbox drivers needs linux-headers kernel
+DRV_VIRTUALBOX="virtualbox-guest-dkms virtualbox-guest-x11"
 # DRV_NOUVEAU="xserver-xorg-video-nouveau"
 # DRV_NV="nvidia nvidia-libgl nvidia-utils"
 # DRV_NV340="nvidia-340xx nvidia-340xx-libgl nvidia-340xx-utils"

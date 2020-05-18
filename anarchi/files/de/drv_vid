@@ -73,7 +73,9 @@ NET_LXQT="$WIFI_TOOLS"
 # 
 # Others
 #
-PACK_YAOURT="yaourt"
+# PACK_YAOURT="aurman" # No more AUR helper...
+# PACK_YAOURT="yaourt" # No more AUR helper...
+PACK_YAOURT=""
 PACK_BLUEZ="bluez bluez-utils"
 # gtk3-print-backends pour lister les imprimantes dans firefox
 PACK_CUPS="cups gtk3-print-backends"
@@ -87,6 +89,9 @@ PACK_KDE_LANG="kde-l10n"
 
 PACK_NETWORKMANAGER="networkmanager"
 PACK_CONNMAN="connman"
+
+PACK_DPTMANAGER="pacman"
+SEARCH_CMD="$PACK_DPTMANAGER -Ss"
 
 SYSTD_BLUEZ="bluetooth"
 SYSTD_CUPS="org.cups.cupsd"

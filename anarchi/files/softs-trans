@@ -43,6 +43,7 @@ function show_pacman_for_lang() {
 	return 0;
 }
 
+# "pacman -Ss" en commande de recherche par défaut
 CMD_SEARCH=${CMD_SEARCH-pacman}
 CMD_SEARCH_ARGS=${CMD_SEARCH_ARGS-"-Ss"}
 

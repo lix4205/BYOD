@@ -2,7 +2,7 @@
 # DEBIANVERSION=("wheezy" "jessie" "jessie-backports" "stretch" "buster" "sid" )
 DEBIANVERSION=("wheezy" "jessie" "jessie-backports" "stretch" "buster" )
 # Set default to buster (testing)
-DEBIAN_DEFAULT="stretch"
+DEBIAN_DEFAULT="buster"
 
 # #
 # # Base packages
@@ -92,6 +92,10 @@ PACK_KDE_LANG="kde-l10n"
 
 PACK_NETWORKMANAGER="network-manager"
 PACK_CONNMAN="connman"
+
+PACK_DPTMANAGER="apt"
+SEARCH_CMD="$PACK_DPTMANAGER search"
+echo "$SEARCH_CMD"
 
 SYSTD_BLUEZ="bluetooth"
 SYSTD_CUPS="org.cups.cupsd"

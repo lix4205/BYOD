@@ -209,8 +209,8 @@ anarchi_apt_update() {
 }
 anarchi_pacman_conf() {
 	# On remplit /etc/apt/sources.list histoire de pouvoir installer quelques softs
-	! cat $RACINE/etc/apt/sources.list | grep -q "deb http://ftp.us.debian.org/debian $DEBIAN_VERS main contrib" && 
-	exe ">" "$RACINE/etc/apt/sources.list" echo -e "deb http://ftp.us.debian.org/debian $DEBIAN_VERS main contrib\ndeb-src http://ftp.us.debian.org/debian $DEBIAN_VERS main\ndeb http://security.debian.org/ $DEBIAN_VERS/updates main\ndeb-src http://security.debian.org/ $DEBIAN_VERS/updates main" 
+	! cat $RACINE/etc/apt/sources.list | grep -q "deb $DEBIAN_SERVER $DEBIAN_VERS main contrib" && 
+	exe ">" "$RACINE/etc/apt/sources.list" echo -e "deb $DEBIAN_SERVER $DEBIAN_VERS main contrib\ndeb-src $DEBIAN_SERVER $DEBIAN_VERS main\ndeb $DEBIAN_SERVER_SECURITY $DEBIAN_VERS/updates main\ndeb-src $DEBIAN_SERVER_SECURITY $DEBIAN_VERS/updates main" 
 	
 	run_once anarchi_apt_update || die "Erreur lors de la récupération des mises à jour !"
 	
@@ -291,3 +291,7 @@ DEBIAN_MIRROR="http://ftp.fr.debian.org/debian"
 GRUB_FILES="/usr/sbin/update-grub"
 PACKAGES_PLUS="$BASE_PACKAGES"
 # ,console-data,kbd"
+
+# DEBIAN SERVER TO RETRIEVE PACKAGE
+DEBIAN_SERVER="http://ftp.fr.debian.org/debian"
+DEBIAN_SERVER_SECURITY="http://security.debian.org/"
